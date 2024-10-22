@@ -1,15 +1,16 @@
 <!-- Styles -->
 <style>
+  /* Estilos globais */
   body {
     background-color: var(--figma-color-bg);
     color: var(--figma-color-text);
-    font-family: 'Inter', 'Helvetica', sans-serif;
     height: 100%;
     width: 100%;
     overflow: hidden;
     margin: 0;
     padding: 0;
     box-sizing: border-box;
+    font-family: 'Inter', sans-serif;
     font-weight: 400;
     user-select: none;
     -webkit-user-select: none;
@@ -17,15 +18,28 @@
     -ms-user-select: none;
   }
 
+  /* Layout e containers principais */
   .plugin-container {
     display: flex;
     flex-direction: row;
-    align-items: stretch;
-    justify-content: stretch;
     width: 100%;
     height: 100%;
     overflow: hidden;
     position: relative;
+  }
+
+  .left-panel {
+    width: 320px;
+    display: flex;
+    flex-direction: column;
+    justify-content: stretch;
+    overflow: hidden;
+    background-color: var(--figma-color-bg);
+  }
+
+  .left-panel-small {
+    width: 240px;
+    height: 263px;
   }
 
   .canvas {
@@ -38,95 +52,7 @@
     background-size: 16px 16px;
   }
 
-  .modal-container {
-    position: absolute;
-    top: 0;
-    right: 0;
-    left: 0;
-    bottom: 0;
-    display: flex;
-    align-items: stretch;
-    justify-content: stretch;
-    padding: 0px 40px 40px 40px;
-  }
-
-  .modal {
-    border-radius: 14px;
-    background-color: var(--figma-color-bg-inverse);
-    color: var(--figma-color-text-oninverse);
-    display: flex;
-    flex-direction: column;
-    align-items: stretch;
-    position: relative;
-    flex-grow: 1;
-  }
-
-  .modal-close-button-container {
-    position: absolute;
-    top: 8px;
-    right: 8px;
-  }
-
-  .tab-container[aria-hidden="true"] {
-    display: none;
-  }
-
-  .tab-container[aria-hidden="false"] {
-    display: flex;
-    flex-direction: column;
-    flex-grow: 1;
-    justify-content: stretch;
-  }
-
-  .controls-container {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    padding: 8px;
-    gap: 8px;
-  }
-
-  .bottom-bar {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: space-between;
-    flex-wrap: wrap;
-    padding: 16px;
-    gap: 8px;
-  }
-
-  .configs-container {
-    display: flex;
-    flex-direction: column;
-    justify-content: stretch;
-    flex-wrap: wrap;
-    padding: 0 16px 16px 16px;
-    gap: 8px;
-  }
-
-  .button-group {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    gap: 8px;
-    overflow: hidden;
-  }
-
-  .side-panel {
-    width: 320px;
-    display: flex;
-    flex-direction: column;
-    justify-content: stretch;
-    overflow: hidden;
-    background-color: var(--figma-color-bg);
-  }
-
-  .side-panel-small {
-    width: 240px;
-    height: 263px;
-  }
-
+  /* Componentes de layout flexível */
   .flex-vertical {
     display: flex;
     flex-direction: column;
@@ -143,6 +69,7 @@
     align-items: stretch;
   }
 
+  /* Cabeçalhos e títulos */
   .section-header {
     display: flex;
     flex-direction: row;
@@ -161,6 +88,7 @@
     padding: 16px;
   }
 
+  /* Divisores */
   .divider-vertical {
     height: 100%;
     width: 1.5px;
@@ -173,6 +101,7 @@
     background-color: var(--figma-color-border);
   }
 
+  /* Botões */
   .button {
     border-radius: 6px;
     border: none;
@@ -256,49 +185,16 @@
     background-color: var(--figma-color-bg-selected-pressed);
   }
 
-  .status-container {
+  /* Grupos de botões */
+  .button-group {
+    display: flex;
     flex-direction: row;
     align-items: center;
-    justify-content: center;
-    height: 24px;
-    font-size: 12px;
-    line-height: 16px;
-    gap: 4px;
-    color: var(--figma-color-text-hover);
+    gap: 8px;
+    overflow: hidden;
   }
 
-  .status-container[aria-hidden="true"] {
-    display: none;
-  }
-
-  .status-container[aria-hidden="false"] {
-    display: flex;
-  }
-
-  .status-icon {
-    height: 100%;
-    width: 24px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-
-  .status-selection {
-    color: var(--figma-color-text-brand);
-  }
-
-  .status-success {
-    color: var(--figma-color-text-success);
-  }
-
-  .status-warning {
-    color: var(--figma-color-text-warning);
-  }
-
-  .status-error {
-    color: var(--figma-color-text-danger);
-  }
-
+  /* Inputs */
   .input-container {
     display: flex;
     flex-direction: row;
@@ -392,6 +288,7 @@
     appearance: textfield;
   }
 
+  /* Listas */
   .list-container {
     display: flex;
     flex-direction: column;
@@ -435,6 +332,129 @@
     color: var(--figma-color-text-onselected-secondary);
   }
 
+  /* Modal */
+  .modal-container {
+    position: absolute;
+    top: 0;
+    right: 0;
+    left: 0;
+    bottom: 0;
+    display: flex;
+    align-items: stretch;
+    justify-content: stretch;
+    padding: 0px 40px 40px 40px;
+  }
+
+  .modal {
+    border-radius: 14px;
+    background-color: var(--figma-color-bg-inverse);
+    color: var(--figma-color-text-oninverse);
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    position: relative;
+    flex-grow: 1;
+  }
+
+  .modal-close-button-container {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+  }
+
+  .modal-hidden {
+    display: none;
+  }
+
+  .modal-visible {
+    display: flex;
+  }
+
+  /* Tabs */
+  .tab-container[aria-hidden="true"] {
+    display: none;
+  }
+
+  .tab-container[aria-hidden="false"] {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    justify-content: stretch;
+  }
+
+  /* Controles e configurações */
+  .controls-container {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    padding: 8px;
+    gap: 8px;
+  }
+
+  .bottom-bar {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    padding: 16px;
+    gap: 8px;
+  }
+
+  .configs-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: stretch;
+    flex-wrap: wrap;
+    padding: 0 16px 16px 16px;
+    gap: 8px;
+  }
+
+  /* Status */
+  .status-container {
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    height: 24px;
+    font-size: 12px;
+    line-height: 16px;
+    gap: 4px;
+    color: var(--figma-color-text-hover);
+  }
+
+  .status-container[aria-hidden="true"] {
+    display: none;
+  }
+
+  .status-container[aria-hidden="false"] {
+    display: flex;
+  }
+
+  .status-icon {
+    height: 100%;
+    width: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .status-selection {
+    color: var(--figma-color-text-brand);
+  }
+
+  .status-success {
+    color: var(--figma-color-text-success);
+  }
+
+  .status-warning {
+    color: var(--figma-color-text-warning);
+  }
+
+  .status-error {
+    color: var(--figma-color-text-danger);
+  }
+
+  /* Utilidades */
   .outlined {
     border: 1px solid var(--figma-color-border);
   }
@@ -447,14 +467,6 @@
     justify-content: stretch;
   }
 
-  .modal-hidden {
-    display: none;
-  }
-
-  .modal-visible {
-    display: flex;
-  }
-
   .full-height {
     height: 100%;
   }
@@ -462,7 +474,7 @@
 
 <!-- UI -->
 <div class="plugin-container">
-  <div class="side-panel">
+  <div class="left-panel">
     <div class="section-title">Smooth Compress</div>
     <div class="divider-horizontal"></div>
     <div class="controls-container" role="tablist">
@@ -576,7 +588,7 @@
   <div class="divider-vertical"></div>
   <div class="flex-vertical full-width">
     <div class="flex-horizontal full-height">
-      <div class="side-panel side-panel-small">
+      <div class="left-panel left-panel-small">
         <div class="section-header">Data</div>
         <div class="list-container" id="selected-data-list">
           <!-- Dinamic filled -->
