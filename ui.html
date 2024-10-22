@@ -1,0 +1,669 @@
+<!-- Styles -->
+<style>
+  body {
+    background-color: var(--figma-color-bg);
+    color: var(--figma-color-text);
+    font-family: 'Inter', 'Helvetica', sans-serif;
+    height: 100%;
+    width: 100%;
+    overflow: hidden;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-weight: 400;
+    user-select: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+  }
+
+  .plugin-container {
+    display: flex;
+    flex-direction: row;
+    align-items: stretch;
+    justify-content: stretch;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    position: relative;
+  }
+
+  .canvas {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    flex-grow: 1;
+    background-image: radial-gradient(var(--figma-color-bg-tertiary) 1px, transparent 1px);
+    background-size: 16px 16px;
+  }
+
+  .modal-container {
+    position: absolute;
+    top: 0;
+    right: 0;
+    left: 0;
+    bottom: 0;
+    display: flex;
+    align-items: stretch;
+    justify-content: stretch;
+    padding: 0px 40px 40px 40px;
+  }
+
+  .modal {
+    border-radius: 14px;
+    background-color: var(--figma-color-bg-inverse);
+    color: var(--figma-color-text-oninverse);
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    position: relative;
+    flex-grow: 1;
+  }
+
+  .modal-close-button-container {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+  }
+
+  .tab-container[aria-hidden="true"] {
+    display: none;
+  }
+
+  .tab-container[aria-hidden="false"] {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    justify-content: stretch;
+  }
+
+  .controls-container {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    padding: 8px;
+    gap: 8px;
+  }
+
+  .bottom-bar {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    padding: 16px;
+    gap: 8px;
+  }
+
+  .configs-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: stretch;
+    flex-wrap: wrap;
+    padding: 0 16px 16px 16px;
+    gap: 8px;
+  }
+
+  .button-group {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 8px;
+    overflow: hidden;
+  }
+
+  .side-panel {
+    width: 320px;
+    display: flex;
+    flex-direction: column;
+    justify-content: stretch;
+    overflow: hidden;
+    background-color: var(--figma-color-bg);
+  }
+
+  .side-panel-small {
+    width: 240px;
+    height: 263px;
+  }
+
+  .flex-vertical {
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    justify-content: stretch;
+    align-items: stretch;
+  }
+
+  .flex-horizontal {
+    display: flex;
+    flex-direction: row;
+    overflow: hidden;
+    justify-content: stretch;
+    align-items: stretch;
+  }
+
+  .section-header {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 11px;
+    line-height: 16px;
+    font-weight: 550;
+    padding: 16px;
+  }
+
+  .section-title {
+    font-size: 14px;
+    line-height: 24px;
+    font-weight: 500;
+    padding: 16px;
+  }
+
+  .divider-vertical {
+    height: 100%;
+    width: 1.5px;
+    background-color: var(--figma-color-border);
+  }
+
+  .divider-horizontal {
+    height: 1.5px;
+    width: 100%;
+    background-color: var(--figma-color-border);
+  }
+
+  .button {
+    border-radius: 6px;
+    border: none;
+    user-select: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: default;
+    margin: 0px;
+    padding: 0px;
+    font: inherit;
+    vertical-align: inherit;
+    outline: none;
+    text-decoration: none;
+  }
+
+  .button-default {
+    font-size: 11px;
+    line-height: 16px;
+    padding: 0 8px;
+    height: 24px;
+  }
+
+  .button-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 24px;
+    width: 24px;
+  }
+
+  .button-primary {
+    background-color: var(--figma-color-bg-brand);
+    color: var(--figma-color-text-onbrand);
+    border: 1px solid var(--figma-color-border-onbrand);
+  }
+
+  .button-primary:hover {
+    background-color: var(--figma-color-bg-brand-hover);
+  }
+
+  .button-primary:active {
+    background-color: var(--figma-color-bg-brand-pressed);
+  }
+
+  .button-primary[aria-disabled="true"] {
+    background-color: var(--figma-color-bg-disabled);
+    color: var(--figma-color-text-disabled);
+    border: 1px solid var(--figma-color-border-disabled);
+  }
+
+  .button-secondary {
+    background-color: var(--figma-color-bg);
+    color: var(--figma-color-text);
+  }
+
+  .button-secondary:hover,
+  .button-secondary[aria-selected="true"] {
+    background-color: var(--figma-color-bg-hover);
+  }
+
+  .button-secondary[aria-selected="true"] {
+    font-weight: 550;
+    color: var(--figma-color-text-hover);
+  }
+
+  .button-secondary:active {
+    background-color: var(--figma-color-bg-pressed);
+  }
+
+  .button-brand-secondary {
+    background-color: var(--figma-color-bg);
+    color: var(--figma-color-text-brand);
+  }
+
+  .button-brand-secondary:hover {
+    background-color: var(--figma-color-bg-selected);
+  }
+
+  .button-brand-secondary:active {
+    background-color: var(--figma-color-bg-selected-pressed);
+  }
+
+  .status-container {
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    height: 24px;
+    font-size: 12px;
+    line-height: 16px;
+    gap: 4px;
+    color: var(--figma-color-text-hover);
+  }
+
+  .status-container[aria-hidden="true"] {
+    display: none;
+  }
+
+  .status-container[aria-hidden="false"] {
+    display: flex;
+  }
+
+  .status-icon {
+    height: 100%;
+    width: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .status-selection {
+    color: var(--figma-color-text-brand);
+  }
+
+  .status-success {
+    color: var(--figma-color-text-success);
+  }
+
+  .status-warning {
+    color: var(--figma-color-text-warning);
+  }
+
+  .status-error {
+    color: var(--figma-color-text-danger);
+  }
+
+  .input-container {
+    display: flex;
+    flex-direction: row;
+    align-items: stretch;
+    justify-content: stretch;
+    height: 24px;
+    font-size: 12px;
+    line-height: 16px;
+    flex-grow: 1;
+    background-color: var(--figma-color-bg-hover);
+    color: var(--figma-color-text-hover);
+    border-radius: 6px;
+    overflow: hidden;
+    position: relative;
+  }
+
+  .input-with-legend-container {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 4px;
+    padding-bottom: 4px;
+  }
+
+  input {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    font-size: inherit;
+    line-height: inherit;
+    padding: 0 .5rem 0 24px;
+    cursor: default;
+    margin: 0px;
+    padding: 0px;
+    font: inherit;
+    vertical-align: inherit;
+    outline: none;
+    border: none;
+    text-decoration: none;
+    background-color: transparent;
+    color: inherit;
+    user-select: text;
+    -webkit-user-select: text;
+    -moz-user-select: text;
+    -ms-user-select: text;
+  }
+
+  .input-label {
+    height: 100%;
+    width: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--figma-color-text-secondary);
+  }
+
+  .input-action {
+    opacity: 0;
+    position: absolute;
+    right: 0;
+    height: 100%;
+    width: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--figma-color-text-secondary);
+    background-color: var(--figma-color-bg-hover);
+    border: none;
+    outline: none;
+  }
+
+  .input-action:hover {
+    opacity: 1;
+  }
+
+  .legend {
+    font-size: 9px;
+    line-height: 14px;
+    font-weight: 550;
+    color: var(--figma-color-text-secondary);
+  }
+
+  input[type="number"]::-webkit-inner-spin-button,
+  input[type="number"]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+
+  input[type="number"] {
+    -moz-appearance: textfield;
+    appearance: textfield;
+  }
+
+  .list-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    height: 100%;
+    width: 240px;
+    padding-bottom: 24px;
+    gap: 4px;
+    overflow-y: scroll;
+  }
+
+  .list-item-container {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    height: 24px;
+    width: 224px;
+    font-size: 12px;
+    line-height: 16px;
+    color: var(--figma-color-text-onselected);
+    border-radius: 6px;
+    overflow: hidden;
+    gap: 4px;
+    background-color: var(--figma-color-bg-selected);
+    flex-shrink: 0;
+  }
+
+  .list-item {
+    display: flex;
+    align-items: center;
+  }
+
+  .list-item-label {
+    height: 24px;
+    width: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: inherit;
+    line-height: inherit;
+    color: var(--figma-color-text-onselected-secondary);
+  }
+
+  .outlined {
+    border: 1px solid var(--figma-color-border);
+  }
+
+  .full-width {
+    flex-grow: 1;
+  }
+
+  .stretch-content {
+    justify-content: stretch;
+  }
+
+  .modal-hidden {
+    display: none;
+  }
+
+  .modal-visible {
+    display: flex;
+  }
+
+  .full-height {
+    height: 100%;
+  }
+</style>
+
+<!-- UI -->
+<div class="plugin-container">
+  <div class="side-panel">
+    <div class="section-title">Smooth Compress</div>
+    <div class="divider-horizontal"></div>
+    <div class="controls-container" role="tablist">
+      <div class="button-group">
+        <button id="tab1-button" role="tab" aria-selected="true" aria-controls="tab1"
+          class="button button-default button-secondary">Downwards</button>
+        <button id="tab2-button" role="tab" aria-selected="false" aria-controls="tab2"
+          class="button button-default button-secondary">To the middle</button>
+        <button id="tab3-button" role="tab" aria-selected="false" aria-controls="tab3"
+          class="button button-default button-secondary">To average</button>
+      </div>
+    </div>
+    <div class="divider-horizontal"></div>
+    <div id="tab1" class="tab-container" role="tabpanel" aria-hidden="false">
+      <div class="section-header">
+        Adjustable parameters
+        <button class="button button-icon button-brand-secondary" title="Learn more">
+          <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <g clip-path="url(#clip0_3022_2)">
+              <path
+                d="M4.545 4.5C4.66255 4.16583 4.89458 3.88405 5.19998 3.70457C5.50538 3.52508 5.86445 3.45947 6.21359 3.51936C6.56273 3.57924 6.87941 3.76076 7.10754 4.03176C7.33567 4.30277 7.46053 4.64576 7.46 5C7.46 6 5.96 6.5 5.96 6.5M6 8.5H6.005M11 6C11 8.76142 8.76142 11 6 11C3.23858 11 1 8.76142 1 6C1 3.23858 3.23858 1 6 1C8.76142 1 11 3.23858 11 6Z"
+                stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" />
+            </g>
+            <defs>
+              <clipPath id="clip0_3022_2">
+                <rect width="12" height="12" fill="none" />
+              </clipPath>
+            </defs>
+          </svg>
+        </button>
+      </div>
+      <div class="configs-container full-height">
+        <div class="button-group stretch-content">
+          <div class="input-with-legend-container">
+            <div class="legend">IQR Factor</div>
+            <div class="input-container">
+              <div class="input-label">I</div>
+              <input type="number" autocomplete="false" spellcheck="false" step="0.1" value="1.5" />
+              <button class="input-action" title="Resetar">
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <g clip-path="url(#clip0_68_15957)">
+                    <path
+                      d="M0.666748 2.66655V6.66655M0.666748 6.66655H4.66675M0.666748 6.66655L3.76008 3.75988C4.68069 2.84083 5.87505 2.24586 7.1632 2.06463C8.45135 1.88339 9.76351 2.12571 10.902 2.75506C12.0404 3.38441 12.9435 4.36671 13.4752 5.55395C14.0068 6.74119 14.1382 8.06905 13.8496 9.33746C13.5609 10.6059 12.8679 11.7461 11.8748 12.5864C10.8818 13.4267 9.64258 13.9215 8.34389 13.9962C7.0452 14.0709 5.7574 13.7216 4.67452 13.0008C3.59164 12.28 2.77234 11.2268 2.34008 9.99988"
+                      stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" />
+                  </g>
+                  <defs>
+                    <clipPath id="clip0_68_15957">
+                      <rect width="16" height="16" fill="none" />
+                    </clipPath>
+                  </defs>
+                </svg>
+              </button>
+            </div>
+          </div>
+          <div class="input-with-legend-container">
+            <div class="legend">Scale Factor</div>
+            <div class="input-container">
+              <div class="input-label">S</div>
+              <input type="number" autocomplete="false" spellcheck="false" step="0.1" value="0.2" />
+              <button class="input-action" title="Resetar">
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <g clip-path="url(#clip0_68_15957)">
+                    <path
+                      d="M0.666748 2.66655V6.66655M0.666748 6.66655H4.66675M0.666748 6.66655L3.76008 3.75988C4.68069 2.84083 5.87505 2.24586 7.1632 2.06463C8.45135 1.88339 9.76351 2.12571 10.902 2.75506C12.0404 3.38441 12.9435 4.36671 13.4752 5.55395C14.0068 6.74119 14.1382 8.06905 13.8496 9.33746C13.5609 10.6059 12.8679 11.7461 11.8748 12.5864C10.8818 13.4267 9.64258 13.9215 8.34389 13.9962C7.0452 14.0709 5.7574 13.7216 4.67452 13.0008C3.59164 12.28 2.77234 11.2268 2.34008 9.99988"
+                      stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" />
+                  </g>
+                  <defs>
+                    <clipPath id="clip0_68_15957">
+                      <rect width="16" height="16" fill="none" />
+                    </clipPath>
+                  </defs>
+                </svg>
+              </button>
+            </div>
+          </div>
+          <div class="input-with-legend-container">
+            <div class="legend">Strength Factor</div>
+            <div class="input-container">
+              <div class="input-label">S</div>
+              <input type="number" autocomplete="false" spellcheck="false" step="0.1" value="1.0" />
+              <button class="input-action" title="Resetar">
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <g clip-path="url(#clip0_68_15957)">
+                    <path
+                      d="M0.666748 2.66655V6.66655M0.666748 6.66655H4.66675M0.666748 6.66655L3.76008 3.75988C4.68069 2.84083 5.87505 2.24586 7.1632 2.06463C8.45135 1.88339 9.76351 2.12571 10.902 2.75506C12.0404 3.38441 12.9435 4.36671 13.4752 5.55395C14.0068 6.74119 14.1382 8.06905 13.8496 9.33746C13.5609 10.6059 12.8679 11.7461 11.8748 12.5864C10.8818 13.4267 9.64258 13.9215 8.34389 13.9962C7.0452 14.0709 5.7574 13.7216 4.67452 13.0008C3.59164 12.28 2.77234 11.2268 2.34008 9.99988"
+                      stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" />
+                  </g>
+                  <defs>
+                    <clipPath id="clip0_68_15957">
+                      <rect width="16" height="16" fill="none" />
+                    </clipPath>
+                  </defs>
+                </svg>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="divider-horizontal"></div>
+      <div class="bottom-bar">
+        <button class="button button-default button-secondary outlined full-width">Compress</button>
+      </div>
+    </div>
+    <div id="tab2" class="tab-container" role="tabpanel" aria-hidden="true">
+      <div class="section-header">Coming soon</div>
+    </div>
+    <div id="tab3" class="tab-container" role="tabpanel" aria-hidden="true">
+      <div class="section-header">Coming soon</div>
+    </div>
+  </div>
+  <div class="divider-vertical"></div>
+  <div class="flex-vertical full-width">
+    <div class="flex-horizontal full-height">
+      <div class="side-panel side-panel-small">
+        <div class="section-header">Data</div>
+        <div class="list-container" id="selected-data-list">
+          <!-- Dinamic filled -->
+        </div>
+      </div>
+      <div class="divider-vertical"></div>
+      <div class="canvas"></div>
+    </div>
+    <div class="divider-horizontal"></div>
+    <div class="bottom-bar">
+      <div id="no-selection-legend" class="status-container" aria-hidden="false">
+        <div class="status-icon">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <g clip-path="url(#clip0_68_15821)">
+              <path
+                d="M8.00001 10.6666V7.99998M8.00001 5.33331H8.00668M14.6667 7.99998C14.6667 11.6819 11.6819 14.6666 8.00001 14.6666C4.31811 14.6666 1.33334 11.6819 1.33334 7.99998C1.33334 4.31808 4.31811 1.33331 8.00001 1.33331C11.6819 1.33331 14.6667 4.31808 14.6667 7.99998Z"
+                stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" />
+            </g>
+            <defs>
+              <clipPath id="clip0_68_15821">
+                <rect width="16" height="16" fill="none" />
+              </clipPath>
+            </defs>
+          </svg>
+        </div>
+        Select some texts to start
+      </div>
+      <div id="no-selection-legend" class="status-container status-warning" aria-hidden="true">
+        <div class="status-icon">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <g clip-path="url(#clip0_68_15821)">
+              <path
+                d="M8.00001 10.6666V7.99998M8.00001 5.33331H8.00668M14.6667 7.99998C14.6667 11.6819 11.6819 14.6666 8.00001 14.6666C4.31811 14.6666 1.33334 11.6819 1.33334 7.99998C1.33334 4.31808 4.31811 1.33331 8.00001 1.33331C11.6819 1.33331 14.6667 4.31808 14.6667 7.99998Z"
+                stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" />
+            </g>
+            <defs>
+              <clipPath id="clip0_68_15821">
+                <rect width="16" height="16" fill="none" />
+              </clipPath>
+            </defs>
+          </svg>
+        </div>
+        Please select only text layers
+      </div>
+      <div id="selection-count-legend" class="status-container status-selection" aria-hidden="true">
+        <div class="status-icon">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M2.66663 4.66675V2.66675H13.3333V4.66675M5.99996 13.3334H9.99996M7.99996 2.66675V13.3334"
+              stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" />
+          </svg>
+        </div>
+        <span>3</span> texts selected
+      </div>
+      <div id="done-legend" class="status-container status-success" aria-hidden="true">
+        <div class="status-icon">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <g clip-path="url(#clip0_68_15637)">
+              <path
+                d="M14.6668 7.38662V7.99995C14.666 9.43756 14.2005 10.8364 13.3397 11.9878C12.4789 13.1393 11.269 13.9816 9.8904 14.3892C8.51178 14.7968 7.03834 14.7479 5.68981 14.2497C4.34128 13.7515 3.18993 12.8307 2.40747 11.6247C1.62501 10.4186 1.25336 8.99199 1.34795 7.55749C1.44254 6.12299 1.9983 4.7575 2.93235 3.66467C3.8664 2.57183 5.12869 1.81021 6.53096 1.49338C7.93323 1.17656 9.40034 1.32151 10.7135 1.90662M14.6668 2.66662L8.00017 9.33995L6.00017 7.33995"
+                stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" />
+            </g>
+            <defs>
+              <clipPath id="clip0_68_15637">
+                <rect width="16" height="16" fill="none" />
+              </clipPath>
+            </defs>
+          </svg>
+        </div>
+        Done!
+      </div>
+      <button class="button button-default button-primary" aria-disabled="true">Keep</button>
+    </div>
+  </div>
+  <div class="modal-container modal-hidden">
+    <div class="modal">
+      <div class="modal-close-button-container">
+        <button class="button button-icon button-secondary" title="Close">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 4L4 12M4 4L12 12" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"
+              stroke-linejoin="round" />
+          </svg>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Scripts -->
+<script>
+</script>
