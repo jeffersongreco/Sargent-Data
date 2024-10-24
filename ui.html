@@ -56,6 +56,24 @@
         input.value = defaultValue; // Redefine o valor do input para o valor padrão
       });
     });
+
+    // Escuta mensagens sobre o status da seleção
+    window.onmessage = (event) => {
+      const message = event.data.pluginMessage;
+      if (message.type === 'selection-status') {
+        const { hasSelection, allTextNodes, selectionCount } = message;
+
+        // Atualiza a visibilidade dos elementos de status da seleção
+        document.getElementById('no-selection-legend').setAttribute('aria-hidden', hasSelection ? 'true' : 'false');
+        document.getElementById('wrong-selection-legend').setAttribute('aria-hidden', allTextNodes ? 'true' : 'false');
+
+        // Exibe o selection-count-legend apenas se selectionCount for maior que 0
+        document.getElementById('selection-count-legend').setAttribute('aria-hidden', selectionCount > 0 && allTextNodes ? 'false' : 'true');
+        if (selectionCount > 0) {
+          document.getElementById('selection-count-legend').querySelector('span').textContent = selectionCount;
+        }
+      }
+    };
   });
 </script>
 
