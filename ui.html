@@ -1,10 +1,71 @@
+<!-- Scripts -->
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    // Tabs
+    const tabButtons = document.querySelectorAll('[role="tab"]');
+    const tabPanels = document.querySelectorAll('[role="tabpanel"]');
+
+    tabButtons.forEach(button => {
+      button.addEventListener('click', function () {
+        // Desmarcar todas as abas e esconder todos os painéis
+        tabButtons.forEach(btn => {
+          btn.setAttribute('aria-selected', 'false');
+        });
+        tabPanels.forEach(panel => {
+          panel.setAttribute('aria-hidden', 'true');
+        });
+
+        // Marcar a aba clicada como selecionada e mostrar o painel correspondente
+        this.setAttribute('aria-selected', 'true');
+        const tabPanelId = this.getAttribute('aria-controls');
+        document.getElementById(tabPanelId).setAttribute('aria-hidden', 'false');
+      });
+    });
+
+    // Inputs
+    const inputContainers = document.querySelectorAll('.input-container');
+
+    // Inputs focus
+    inputContainers.forEach(container => {
+      const input = container.querySelector('input');
+
+      input.addEventListener('focus', function () {
+        container.classList.add('focused');
+      });
+
+      input.addEventListener('blur', function () {
+        container.classList.remove('focused');
+      });
+    });
+
+    // Inputs reset
+    inputContainers.forEach(container => {
+      const input = container.querySelector('input');
+      const resetButton = container.querySelector('.input-action[title="Reset"]');
+      const defaultValue = input.value; // Armazena o valor padrão inicial
+
+      input.addEventListener('focus', function () {
+        container.classList.add('focused');
+      });
+
+      input.addEventListener('blur', function () {
+        container.classList.remove('focused');
+      });
+
+      resetButton.addEventListener('click', function () {
+        input.value = defaultValue; // Redefine o valor do input para o valor padrão
+      });
+    });
+  });
+</script>
+
 <!-- Styles -->
 <style>
   * {
     box-sizing: border-box;
-}
+  }
 
-div {
+  div {
     display: block;
     unicode-bidi: isolate;
   }
@@ -277,10 +338,10 @@ div {
   }
 
   .input-container:hover {
-    border: 1px solid var(--figma-color-border); 
+    border: 1px solid var(--figma-color-border);
   }
 
-  .input-container:focus {
+  .input-container.focused {
     outline: 1px solid var(--figma-color-border-brand-strong);
   }
 
@@ -551,7 +612,7 @@ div {
             <div class="input-container">
               <div class="input-label">I</div>
               <input type="number" autocomplete="false" spellcheck="false" step="0.1" value="1.5" />
-              <button class="input-action" title="Resetar">
+              <button class="input-action" title="Reset">
                 <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
                   <g clip-path="url(#clip0_68_15957)">
                     <path
@@ -572,7 +633,7 @@ div {
             <div class="input-container">
               <div class="input-label">S</div>
               <input type="number" autocomplete="false" spellcheck="false" step="0.1" value="0.2" />
-              <button class="input-action" title="Resetar">
+              <button class="input-action" title="Reset">
                 <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
                   <g clip-path="url(#clip0_68_15957)">
                     <path
@@ -593,7 +654,7 @@ div {
             <div class="input-container">
               <div class="input-label">S</div>
               <input type="number" autocomplete="false" spellcheck="false" step="0.1" value="1.0" />
-              <button class="input-action" title="Resetar">
+              <button class="input-action" title="Reset">
                 <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
                   <g clip-path="url(#clip0_68_15957)">
                     <path
@@ -707,7 +768,3 @@ div {
     </div>
   </div>
 </div>
-
-<!-- Scripts -->
-<script>
-</script>
