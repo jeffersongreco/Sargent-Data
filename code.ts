@@ -24,5 +24,33 @@ function updateSelectionStatus() {
 // Escuta eventos de alteração de seleção
 figma.on('selectionchange', updateSelectionStatus);
 
+// Função para gerar uma string a partir dos textos selecionados
+function generateStringFromSelectedTextNodes() {
+  const selectedNodes = figma.currentPage.selection.filter(node => node.type === 'TEXT') as TextNode[];
+
+  // Ordena os nós de texto por linha (y) e depois por coluna (x)
+  selectedNodes.sort((a, b) => {
+    const aBottom = a.y + a.height;
+    const bBottom = b.y + b.height;
+
+    // Verifica se estão na mesma linha
+    if (a.y < bBottom && b.y < aBottom) {
+      return a.x - b.x; // Mesma linha, ordena por x
+    }
+    return a.y - b.y; // Ordena por y
+  });
+
+  // Concatena o conteúdo dos nós de texto
+  const concatenatedText = selectedNodes.map(node => node.characters).join(',');
+
+  console.log('Texto concatenado:', concatenatedText);
+}
+
+// Escuta eventos de alteração de seleção
+figma.on('selectionchange', () => {
+  updateSelectionStatus();
+  generateStringFromSelectedTextNodes();
+});
+
 // Atualiza o status da seleção ao iniciar
 updateSelectionStatus();
