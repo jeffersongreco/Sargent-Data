@@ -1,5 +1,14 @@
 <!-- Styles -->
 <style>
+  * {
+    box-sizing: border-box;
+}
+
+div {
+    display: block;
+    unicode-bidi: isolate;
+  }
+
   /* Estilos globais */
   body {
     background-color: var(--figma-color-bg);
@@ -9,7 +18,6 @@
     overflow: hidden;
     margin: 0;
     padding: 0;
-    box-sizing: border-box;
     font-family: 'Inter', sans-serif;
     font-weight: 400;
     user-select: none;
@@ -19,89 +27,137 @@
   }
 
   /* Layout e containers principais */
-  .plugin-container {
+  .root {
     display: flex;
     flex-direction: row;
     width: 100%;
     height: 100%;
-    overflow: hidden;
     position: relative;
   }
 
   .left-panel {
-    width: 320px;
     display: flex;
     flex-direction: column;
-    justify-content: stretch;
-    overflow: hidden;
-    background-color: var(--figma-color-bg);
+    width: 320px;
   }
 
-  .left-panel-small {
-    width: 240px;
-    height: 263px;
+  .view-container {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .view-group {
+    display: flex;
+    flex-direction: row;
+    flex-grow: 1;
+  }
+
+  .data-panel {
+    width: 180px;
+    /* height: calc(320px - 56px); */
   }
 
   .canvas {
+    width: 500px;
+    /* height: calc(320px - 56px); */
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    flex-grow: 1;
     background-image: radial-gradient(var(--figma-color-bg-tertiary) 1px, transparent 1px);
     background-size: 16px 16px;
+  }
+
+  .configs-container {
+    display: flex;
+    flex-grow: 1;
+    flex-direction: column;
+    padding: 0 16px 16px 16px;
+    gap: 8px;
+  }
+
+  .left-panel-width {
+    width: 320px;
+  }
+
+  .data-panel-width {
+    width: 180px;
   }
 
   /* Componentes de layout flexível */
   .flex-vertical {
     display: flex;
     flex-direction: column;
-    overflow: hidden;
-    justify-content: stretch;
-    align-items: stretch;
+    height: 320px;
+    width: calc(1000px - 320px);
   }
 
   .flex-horizontal {
     display: flex;
+    height: calc(320px - 56px);
     flex-direction: row;
-    overflow: hidden;
-    justify-content: stretch;
-    align-items: stretch;
   }
 
-  /* Cabeçalhos e títulos */
+  /* Barras */
   .section-header {
     display: flex;
+    height: 56px;
     flex-direction: row;
     align-items: center;
     justify-content: space-between;
     font-size: 11px;
     line-height: 16px;
     font-weight: 550;
-    padding: 16px;
+    padding: 0px 16px;
   }
 
   .section-title {
+    height: 56px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
     font-size: 14px;
     line-height: 24px;
     font-weight: 500;
-    padding: 16px;
+    padding: 0px 16px;
+  }
+
+  .bottom-bar {
+    height: 56px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0px 16px;
+    gap: 8px;
+  }
+
+  .top-bar {
+    display: flex;
+    height: 40px;
+    flex-direction: row;
+    align-items: center;
+    padding: 0px 8px;
+    gap: 8px;
   }
 
   /* Divisores */
-  .divider-vertical {
-    height: 100%;
-    width: 1.5px;
-    background-color: var(--figma-color-border);
+  .divider-right {
+    border-right: 1px solid var(--figma-color-border);
   }
 
-  .divider-horizontal {
-    height: 1.5px;
-    width: 100%;
-    background-color: var(--figma-color-border);
+  .divider-bottom {
+    border-bottom: 1px solid var(--figma-color-border);
   }
 
   /* Botões */
+  .button-group {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 8px;
+  }
+
   .button {
     border-radius: 6px;
     border: none;
@@ -185,21 +241,29 @@
     background-color: var(--figma-color-bg-selected-pressed);
   }
 
-  /* Grupos de botões */
-  .button-group {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    gap: 8px;
-    overflow: hidden;
+  .cursor-pointer {
+    cursor: pointer;
   }
 
   /* Inputs */
+  .input-group {
+    display: flex;
+    width: calc(320px - 32px);
+    flex-direction: row;
+    align-items: stretch;
+    gap: 8px;
+    padding-bottom: 4px;
+  }
+
+  .input-and-legend-container {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
   .input-container {
     display: flex;
     flex-direction: row;
-    align-items: stretch;
-    justify-content: stretch;
     height: 24px;
     font-size: 12px;
     line-height: 16px;
@@ -209,23 +273,24 @@
     border-radius: 6px;
     overflow: hidden;
     position: relative;
+    border: 1px solid transparent;
   }
 
-  .input-with-legend-container {
-    display: flex;
-    flex-direction: column;
-    align-items: stretch;
-    gap: 4px;
-    padding-bottom: 4px;
+  .input-container:hover {
+    border: 1px solid var(--figma-color-border); 
+  }
+
+  .input-container:focus {
+    outline: 1px solid var(--figma-color-border-brand-strong);
   }
 
   input {
-    width: 100%;
     display: flex;
+    width: 100%;
     align-items: center;
     font-size: inherit;
     line-height: inherit;
-    padding: 0 .5rem 0 24px;
+    padding: 0 8px 0 24px;
     cursor: default;
     margin: 0px;
     padding: 0px;
@@ -255,7 +320,7 @@
     opacity: 0;
     position: absolute;
     right: 0;
-    height: 100%;
+    height: 24px;
     width: 24px;
     display: flex;
     align-items: center;
@@ -382,32 +447,8 @@
     justify-content: stretch;
   }
 
-  /* Controles e configurações */
-  .controls-container {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    padding: 8px;
-    gap: 8px;
-  }
-
-  .bottom-bar {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: space-between;
-    flex-wrap: wrap;
-    padding: 16px;
-    gap: 8px;
-  }
-
-  .configs-container {
-    display: flex;
-    flex-direction: column;
-    justify-content: stretch;
-    flex-wrap: wrap;
-    padding: 0 16px 16px 16px;
-    gap: 8px;
+  .text-secondary {
+    color: var(--figma-color-text-secondary);
   }
 
   /* Status */
@@ -463,35 +504,32 @@
     flex-grow: 1;
   }
 
-  .stretch-content {
-    justify-content: stretch;
-  }
-
   .full-height {
     height: 100%;
   }
 </style>
 
 <!-- UI -->
-<div class="plugin-container">
-  <div class="left-panel">
-    <div class="section-title">Smooth Compress</div>
-    <div class="divider-horizontal"></div>
-    <div class="controls-container" role="tablist">
+<div class="root">
+  <div class="left-panel left-panel-width divider-right">
+    <div class="section-title left-panel-width divider-bottom">
+      Smooth Compress
+      <a class="button button-default button-brand-secondary cursor-pointer" href="">Learn More</a>
+    </div>
+    <div class="top-bar left-panel-width divider-bottom" role="tablist">
       <div class="button-group">
         <button id="tab1-button" role="tab" aria-selected="true" aria-controls="tab1"
-          class="button button-default button-secondary">Downwards</button>
+          class="button button-default button-secondary text-secondary">Downwards</button>
         <button id="tab2-button" role="tab" aria-selected="false" aria-controls="tab2"
-          class="button button-default button-secondary">To the middle</button>
+          class="button button-default button-secondary text-secondary">To the middle</button>
         <button id="tab3-button" role="tab" aria-selected="false" aria-controls="tab3"
-          class="button button-default button-secondary">To average</button>
+          class="button button-default button-secondary text-secondary">To average</button>
       </div>
     </div>
-    <div class="divider-horizontal"></div>
-    <div id="tab1" class="tab-container" role="tabpanel" aria-hidden="false">
+    <div id="tab1" class="tab-container left-panel-width" role="tabpanel" aria-hidden="false">
       <div class="section-header">
         Adjustable parameters
-        <button class="button button-icon button-brand-secondary" title="Learn more">
+        <button class="button button-icon button-brand-secondary" title="Learn to use the parameters">
           <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
             <g clip-path="url(#clip0_3022_2)">
               <path
@@ -506,9 +544,9 @@
           </svg>
         </button>
       </div>
-      <div class="configs-container full-height">
-        <div class="button-group stretch-content">
-          <div class="input-with-legend-container">
+      <div class="configs-container left-panel-width">
+        <div class="input-group">
+          <div class="input-and-legend-container">
             <div class="legend">IQR Factor</div>
             <div class="input-container">
               <div class="input-label">I</div>
@@ -529,7 +567,7 @@
               </button>
             </div>
           </div>
-          <div class="input-with-legend-container">
+          <div class="input-and-legend-container">
             <div class="legend">Scale Factor</div>
             <div class="input-container">
               <div class="input-label">S</div>
@@ -550,7 +588,7 @@
               </button>
             </div>
           </div>
-          <div class="input-with-legend-container">
+          <div class="input-and-legend-container">
             <div class="legend">Strength Factor</div>
             <div class="input-container">
               <div class="input-label">S</div>
@@ -573,31 +611,25 @@
           </div>
         </div>
       </div>
-      <div class="divider-horizontal"></div>
       <div class="bottom-bar">
         <button class="button button-default button-secondary outlined full-width">Compress</button>
       </div>
     </div>
-    <div id="tab2" class="tab-container" role="tabpanel" aria-hidden="true">
+    <div id="tab2" class="tab-container left-panel-width" role="tabpanel" aria-hidden="true">
       <div class="section-header">Coming soon</div>
     </div>
-    <div id="tab3" class="tab-container" role="tabpanel" aria-hidden="true">
+    <div id="tab3" class="tab-container left-panel-width" role="tabpanel" aria-hidden="true">
       <div class="section-header">Coming soon</div>
     </div>
   </div>
-  <div class="divider-vertical"></div>
-  <div class="flex-vertical full-width">
-    <div class="flex-horizontal full-height">
-      <div class="left-panel left-panel-small">
+  <div class="view-container">
+    <div class="view-group">
+      <div class="data-panel divider-right divider-bottom">
         <div class="section-header">Data</div>
-        <div class="list-container" id="selected-data-list">
-          <!-- Dinamic filled -->
-        </div>
+        <div class="list-container" id="selected-data-list"></div>
       </div>
-      <div class="divider-vertical"></div>
-      <div class="canvas"></div>
+      <div class="canvas divider-bottom"></div>
     </div>
-    <div class="divider-horizontal"></div>
     <div class="bottom-bar">
       <div id="no-selection-legend" class="status-container" aria-hidden="false">
         <div class="status-icon">
@@ -616,7 +648,7 @@
         </div>
         Select some texts to start
       </div>
-      <div id="no-selection-legend" class="status-container status-warning" aria-hidden="true">
+      <div id="wrong-selection-legend" class="status-container status-warning" aria-hidden="true">
         <div class="status-icon">
           <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
             <g clip-path="url(#clip0_68_15821)">
