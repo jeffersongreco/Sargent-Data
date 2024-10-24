@@ -95,6 +95,16 @@
           document.getElementById('selection-count-legend').querySelector('span').textContent = selectionCount;
         }
 
+        if (selectionCount > 2) {
+          document.getElementById('compress-down-button').removeAttribute('aria-disabled');
+          document.getElementById('selection-count-legend').classList.remove('status-info');
+          document.getElementById('selection-count-legend').classList.add('status-selection');
+        }
+
+        if (selectionCount < 3) {
+          document.getElementById('compress-down-button').setAttribute('aria-disabled', 'true');
+        }
+
         // Atualiza a lista de textos concatenados
         if (selectionCount === 0) {
           const textListContainer = document.getElementById('selected-data-list');
@@ -105,6 +115,27 @@
           updateTextList(concatenatedText);
         }
       }
+
+      // Adiciona listeners para os inputs
+      document.getElementById('iqr-factor').addEventListener('input', function () {
+        const value = this.value;
+        parent.postMessage({ pluginMessage: { type: 'update-iqr-factor', value } }, '*');
+      });
+
+      document.getElementById('scale-factor').addEventListener('input', function () {
+        const value = this.value;
+        parent.postMessage({ pluginMessage: { type: 'update-scale-factor', value } }, '*');
+      });
+
+      document.getElementById('strength-factor').addEventListener('input', function () {
+        const value = this.value;
+        parent.postMessage({ pluginMessage: { type: 'update-strength-factor', value } }, '*');
+      });
+
+      // Adiciona listener para o botão de compressão
+      document.getElementById('compress-down-button').addEventListener('click', function () {
+        parent.postMessage({ pluginMessage: { type: 'compress-data' } }, '*');
+      });
     };
   });
 </script>
@@ -300,6 +331,10 @@
     width: 24px;
   }
 
+  .outlined {
+    border: 1px solid var(--figma-color-border);
+  }
+
   .button-primary {
     background-color: var(--figma-color-bg-brand);
     color: var(--figma-color-text-onbrand);
@@ -337,6 +372,11 @@
 
   .button-secondary:active {
     background-color: var(--figma-color-bg-pressed);
+  }
+
+  .button-secondary[aria-disabled="true"] {
+    color: var(--figma-color-text-disabled);
+    border: 1px solid var(--figma-color-border-disabled);
   }
 
   .button-brand-secondary {
@@ -568,7 +608,6 @@
     font-size: 12px;
     line-height: 16px;
     gap: 4px;
-    color: var(--figma-color-text-hover);
   }
 
   .status-container[aria-hidden="true"] {
@@ -585,6 +624,10 @@
     display: flex;
     align-items: center;
     justify-content: center;
+  }
+
+  .status-info {
+    color: var(--figma-color-text-hover);
   }
 
   .status-selection {
@@ -604,10 +647,6 @@
   }
 
   /* Utilidades */
-  .outlined {
-    border: 1px solid var(--figma-color-border);
-  }
-
   .full-width {
     flex-grow: 1;
   }
@@ -658,7 +697,7 @@
             <div class="legend">IQR Factor</div>
             <div class="input-container">
               <div class="input-label">I</div>
-              <input type="number" autocomplete="false" spellcheck="false" step="0.1" value="1.5" />
+              <input id="iqr-factor" type="number" autocomplete="false" spellcheck="false" step="0.1" value="1.5" />
               <button class="input-action" title="Reset">
                 <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
                   <g clip-path="url(#clip0_68_15957)">
@@ -679,7 +718,7 @@
             <div class="legend">Scale Factor</div>
             <div class="input-container">
               <div class="input-label">S</div>
-              <input type="number" autocomplete="false" spellcheck="false" step="0.1" value="0.2" />
+              <input id="scale-factor" type="number" autocomplete="false" spellcheck="false" step="0.1" value="0.2" />
               <button class="input-action" title="Reset">
                 <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
                   <g clip-path="url(#clip0_68_15957)">
@@ -700,7 +739,8 @@
             <div class="legend">Strength Factor</div>
             <div class="input-container">
               <div class="input-label">S</div>
-              <input type="number" autocomplete="false" spellcheck="false" step="0.1" value="1.0" />
+              <input id="strength-factor" type="number" autocomplete="false" spellcheck="false" step="0.1"
+                value="1.0" />
               <button class="input-action" title="Reset">
                 <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
                   <g clip-path="url(#clip0_68_15957)">
@@ -720,7 +760,8 @@
         </div>
       </div>
       <div class="bottom-bar">
-        <button class="button button-default button-secondary outlined full-width">Compress</button>
+        <button id="compress-down-button"
+          class="button button-default button-secondary outlined full-width" aria-disabled="true">Compress</button>
       </div>
     </div>
     <div id="tab2" class="tab-container left-panel-width" role="tabpanel" aria-hidden="true">
@@ -745,7 +786,7 @@
       <div class="canvas divider-bottom"></div>
     </div>
     <div class="bottom-bar">
-      <div id="no-selection-legend" class="status-container" aria-hidden="false">
+      <div id="no-selection-legend" class="status-container status-info" aria-hidden="false">
         <div class="status-icon">
           <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
             <g clip-path="url(#clip0_68_15821)">
@@ -760,7 +801,7 @@
             </defs>
           </svg>
         </div>
-        Select some texts to start
+        Select 3 or more texts to start
       </div>
       <div id="wrong-selection-legend" class="status-container status-warning" aria-hidden="true">
         <div class="status-icon">
@@ -779,7 +820,7 @@
         </div>
         Please select only text layers
       </div>
-      <div id="selection-count-legend" class="status-container status-selection" aria-hidden="true">
+      <div id="selection-count-legend" class="status-container status-info" aria-hidden="true">
         <div class="status-icon">
           <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path d="M2.66663 4.66675V2.66675H13.3333V4.66675M5.99996 13.3334H9.99996M7.99996 2.66675V13.3334"
