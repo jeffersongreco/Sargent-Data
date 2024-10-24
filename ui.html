@@ -57,20 +57,52 @@
       });
     });
 
-    // Escuta mensagens sobre o status da seleção
+    // Função para atualizar a lista de textos concatenados
+    function updateTextList(concatenatedText) {
+      const textListContainer = document.getElementById('selected-data-list');
+      textListContainer.innerHTML = ''; // Limpa a lista existente
+
+      // Ajuste o split para usar vírgula
+      concatenatedText.split(',').forEach((text, index) => {
+        const listItemContainer = document.createElement('div');
+        listItemContainer.className = 'list-item-container';
+
+        const listItemLabel = document.createElement('div');
+        listItemLabel.className = 'list-item-label';
+        listItemLabel.textContent = index + 1; // Índice do item
+
+        const listItem = document.createElement('div');
+        listItem.className = 'list-item';
+        listItem.textContent = text; // Conteúdo do texto
+
+        listItemContainer.appendChild(listItemLabel);
+        listItemContainer.appendChild(listItem);
+        textListContainer.appendChild(listItemContainer);
+      });
+    }
+
+    // Escuta mensagens do plugin
     window.onmessage = (event) => {
       const message = event.data.pluginMessage;
       if (message.type === 'selection-status') {
-        const { hasSelection, allTextNodes, selectionCount } = message;
+        const { hasSelection, allTextNodes, selectionCount, concatenatedText } = message;
 
-        // Atualiza a visibilidade dos elementos de status da seleção
+        // Atualiza a visibilidade dos elementos de status
         document.getElementById('no-selection-legend').setAttribute('aria-hidden', hasSelection ? 'true' : 'false');
         document.getElementById('wrong-selection-legend').setAttribute('aria-hidden', allTextNodes ? 'true' : 'false');
-
-        // Exibe o selection-count-legend apenas se selectionCount for maior que 0
         document.getElementById('selection-count-legend').setAttribute('aria-hidden', selectionCount > 0 && allTextNodes ? 'false' : 'true');
         if (selectionCount > 0) {
           document.getElementById('selection-count-legend').querySelector('span').textContent = selectionCount;
+        }
+
+        // Atualiza a lista de textos concatenados
+        if (selectionCount === 0) {
+          const textListContainer = document.getElementById('selected-data-list');
+          if (textListContainer) {
+            textListContainer.innerHTML = '';
+          }
+        } else if (concatenatedText) {
+          updateTextList(concatenatedText);
         }
       }
     };
@@ -436,10 +468,8 @@
   .list-container {
     display: flex;
     flex-direction: column;
-    align-items: center;
-    height: 100%;
-    width: 240px;
-    padding-bottom: 24px;
+    height: 208px;
+    padding: 0px 16px 24px 16px;
     gap: 4px;
     overflow-y: scroll;
   }
@@ -449,7 +479,6 @@
     flex-direction: row;
     align-items: center;
     height: 24px;
-    width: 224px;
     font-size: 12px;
     line-height: 16px;
     color: var(--figma-color-text-onselected);
@@ -705,7 +734,13 @@
     <div class="view-group">
       <div class="data-panel divider-right divider-bottom">
         <div class="section-header">Data</div>
-        <div class="list-container" id="selected-data-list"></div>
+        <div class="list-container data-panel-width" id="selected-data-list">
+          <!-- <div class="list-item-container">
+            <div class="list-item-label">1</div>
+            <div class="list-item">1.0</div>
+          </div> -->
+          <!-- Os itens da lista serão inseridos pelo javascript -->
+        </div>
       </div>
       <div class="canvas divider-bottom"></div>
     </div>
