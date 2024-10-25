@@ -89,20 +89,22 @@
 
         // Atualiza a visibilidade dos elementos de status
         document.getElementById('no-selection-legend').setAttribute('aria-hidden', hasSelection ? 'true' : 'false');
-        document.getElementById('wrong-selection-legend').setAttribute('aria-hidden', allTextNodes ? 'true' : 'false');
         document.getElementById('selection-count-legend').setAttribute('aria-hidden', selectionCount > 0 && allTextNodes ? 'false' : 'true');
-        if (selectionCount > 0) {
+
+        if (selectionCount > 0 && allTextNodes) {
           document.getElementById('selection-count-legend').querySelector('span').textContent = selectionCount;
         }
 
-        if (selectionCount > 2) {
+        if (selectionCount > 2 && allTextNodes) {
           document.getElementById('compress-down-button').removeAttribute('aria-disabled');
+          document.getElementById('compress-down-button').disabled = false;
           document.getElementById('selection-count-legend').classList.remove('status-info');
           document.getElementById('selection-count-legend').classList.add('status-selection');
         }
 
         if (selectionCount < 3) {
           document.getElementById('compress-down-button').setAttribute('aria-disabled', 'true');
+          document.getElementById('compress-down-button').disabled = true;
         }
 
         // Atualiza a lista de textos concatenados
@@ -114,6 +116,12 @@
         } else if (concatenatedText) {
           updateTextList(concatenatedText);
         }
+      }
+
+      if (message.type === 'result-data') {
+        console.log("Resultados recebidos");
+        console.log("Original Data: ", message.originalData);
+        console.log("Compressed Data: ", message.compressedData);
       }
 
       // Adiciona listeners para os inputs
@@ -379,6 +387,12 @@
     border: 1px solid var(--figma-color-border-disabled);
   }
 
+  .button-secondary[aria-disabled="true"]:hover {
+    background-color: var(--figma-color-bg);
+    color: var(--figma-color-text-disabled);
+    border: 1px solid var(--figma-color-border-disabled);
+  }
+
   .button-brand-secondary {
     background-color: var(--figma-color-bg);
     color: var(--figma-color-text-brand);
@@ -638,10 +652,6 @@
     color: var(--figma-color-text-success);
   }
 
-  .status-warning {
-    color: var(--figma-color-text-warning);
-  }
-
   .status-error {
     color: var(--figma-color-text-danger);
   }
@@ -760,8 +770,8 @@
         </div>
       </div>
       <div class="bottom-bar">
-        <button id="compress-down-button"
-          class="button button-default button-secondary outlined full-width" aria-disabled="true">Compress</button>
+        <button id="compress-down-button" class="button button-default button-secondary outlined full-width"
+          aria-disabled="true" disabled>Compress</button>
       </div>
     </div>
     <div id="tab2" class="tab-container left-panel-width" role="tabpanel" aria-hidden="true">
@@ -802,23 +812,6 @@
           </svg>
         </div>
         Select 3 or more texts to start
-      </div>
-      <div id="wrong-selection-legend" class="status-container status-warning" aria-hidden="true">
-        <div class="status-icon">
-          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <g clip-path="url(#clip0_68_15821)">
-              <path
-                d="M8.00001 10.6666V7.99998M8.00001 5.33331H8.00668M14.6667 7.99998C14.6667 11.6819 11.6819 14.6666 8.00001 14.6666C4.31811 14.6666 1.33334 11.6819 1.33334 7.99998C1.33334 4.31808 4.31811 1.33331 8.00001 1.33331C11.6819 1.33331 14.6667 4.31808 14.6667 7.99998Z"
-                stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" />
-            </g>
-            <defs>
-              <clipPath id="clip0_68_15821">
-                <rect width="16" height="16" fill="none" />
-              </clipPath>
-            </defs>
-          </svg>
-        </div>
-        Please select only text layers
       </div>
       <div id="selection-count-legend" class="status-container status-info" aria-hidden="true">
         <div class="status-icon">

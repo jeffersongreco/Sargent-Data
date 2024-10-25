@@ -3,19 +3,27 @@
 // You can access browser APIs in the <script> tag inside "ui.html" which has a
 // full browser environment (See https://www.figma.com/plugin-docs/how-plugins-run).
 
-// This shows the HTML page in "ui.html".
+let iqrFactor: number = 1.5;
+let scaleFactor: number = 0.2;
+let strengthFactor: number = 1.0;
+let originalData: number[] = [];
+let compressedData: number[] = [];
+
 figma.showUI(__html__, { themeColors: true, width: 1000, height: 320, title: "Sargent" })
 
-let globalNumberArray: number[] = [];
-let globalResultArray: number[] = [];
+updateSelectionStatus();
+generateStringFromSelectedTextNodes();
 
-// Função para atualizar o status da seleção
+figma.on('selectionchange', () => {
+  updateSelectionStatus();
+  generateStringFromSelectedTextNodes();
+});
+
 function updateSelectionStatus() {
   const selectedNodes = figma.currentPage.selection;
   const hasSelection = selectedNodes.length > 0;
   const allTextNodes = selectedNodes.every(node => node.type === 'TEXT');
 
-  // Envia o status para a interface do usuário
   figma.ui.postMessage({
     type: 'selection-status',
     hasSelection,
@@ -24,58 +32,34 @@ function updateSelectionStatus() {
   });
 }
 
-// Escuta eventos de alteração de seleção
 figma.on('selectionchange', updateSelectionStatus);
 
-// ... código existente ...
-
-// Função para gerar uma string a partir dos textos selecionados
 function generateStringFromSelectedTextNodes() {
   const selectedNodes = figma.currentPage.selection.filter(node => node.type === 'TEXT') as TextNode[];
 
-  // Ordena os nós de texto por linha (y) e depois por coluna (x)
   selectedNodes.sort((a, b) => {
     const aBottom = a.y + a.height;
     const bBottom = b.y + b.height;
 
-    // Verifica se estão na mesma linha
     if (a.y < bBottom && b.y < aBottom) {
-      return a.x - b.x; // Mesma linha, ordena por x
+      return a.x - b.x;
     }
-    return a.y - b.y; // Ordena por y
+    return a.y - b.y;
   });
 
-  // Concatena o conteúdo dos nós de texto
   const concatenatedText = selectedNodes.map(node => node.characters).join(',');
 
-  // Transforma concatenatedText em um array de números
-  globalNumberArray = concatenatedText.split(',').map(Number);
+  originalData = concatenatedText.split(',').map(Number);
 
-  // Envia o texto concatenado para a interface do usuário
   figma.ui.postMessage({
     type: 'selection-status',
     hasSelection: selectedNodes.length > 0,
     allTextNodes: selectedNodes.every(node => node.type === 'TEXT'),
     selectionCount: selectedNodes.length,
-    concatenatedText // Certifique-se de que o concatenatedText está incluído
+    concatenatedText
   });
 }
 
-// Escuta eventos de alteração de seleção
-figma.on('selectionchange', () => {
-  updateSelectionStatus();
-  generateStringFromSelectedTextNodes();
-});
-
-// Atualiza o status da seleção ao iniciar
-updateSelectionStatus();
-generateStringFromSelectedTextNodes();
-
-let iqrFactor: number;
-let scaleFactor: number;
-let strengthFactor: number;
-
-// Adiciona um listener para mensagens recebidas da interface do usuário
 figma.ui.onmessage = message => {
 
   if (message.type === 'update-iqr-factor') {
@@ -89,8 +73,7 @@ figma.ui.onmessage = message => {
   }
 
   if (message.type === 'compress-data') {
-    globalResultArray = compressData(globalNumberArray, iqrFactor, scaleFactor, strengthFactor);
-    console.log(globalResultArray);
+    compressData(originalData, iqrFactor, scaleFactor, strengthFactor);
   }
 };
 
@@ -99,7 +82,7 @@ function compressData(
   iqrFactor: number = 1.5,
   scaleFactor: number = 0.1,
   compressionStrength: number = 1.0
-): number[] {
+): void {
   const median = (arr: number[]): number => {
     const sorted = [...arr].sort((a, b) => a - b);
     const mid = Math.floor(sorted.length / 2);
@@ -137,5 +120,14 @@ function compressData(
     return threshold + (compressed - threshold) * compressionStrength;
   };
 
-  return dataValues.map((value) => parseFloat(compress(value).toFixed(3)));
+  compressedData = dataValues.map((value) => parseFloat(compress(value).toFixed(3)));
+
+  figma.ui.postMessage({
+    type: 'result-data',
+    originalData: originalData,
+    compressedData: compressedData
+  });
+
+  // console.log("Original Data: ", originalData);
+  // console.log("Compressed Data: ", compressedData);
 }
